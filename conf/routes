@@ -1,0 +1,15 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+# Main Admin routes
+GET      /admin/users                           controllers.Admin.listUsers
+POST     /admin/users                           controllers.Admin.saveUser
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file)
+
+GET / controllers.Assets.at(path="/public/swagger-ui", file="index.html")
+
+GET /api-docs controllers.ApiHelpController.getResources
