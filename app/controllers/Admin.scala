@@ -3,7 +3,8 @@ package controllers
 import com.wordnik.swagger.annotations.{ApiOperation, Api}
 import play.api.libs.json._
 import play.api.mvc._
-import models.User._
+import models._
+import utils.MongoFactory
 
 
 /**
@@ -14,13 +15,18 @@ import models.User._
 @Api(value = "/api/admin", description= "Admin operations")
 object Admin extends Controller{
 
+
+  implicit val userWrites = Json.writes[User]
+  implicit val userReads = Json.reads[User]
+
   //get all users
   @ApiOperation(value = "get All Users",
     notes = "Returns List of all Users",
     response = classOf[User],
     httpMethod = "GET")
   def listUsers = Action {
-    Ok(Json.toJson(users))
+    val users = MongoFactory.collection.find().toList
+    Ok(com.mongodb.util.JSON.serialize(users))
   }
 
   //add user
@@ -38,7 +44,7 @@ object Admin extends Controller{
         BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toFlatJson(errors)))
       },
       user => {
-        addUser(user)
+        User.addUser(user)
         Ok(Json.obj("status" -> "OK"))
       }
     )
